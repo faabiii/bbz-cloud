@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-console */
 /* eslint-disable no-shadow */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-return-await */
@@ -177,6 +179,7 @@ class StashCatClient {
 
     const conversation_key = this._get_conversation_key(source);
 
+    const messages = [];
     for (const message of data.messages) {
       if (message.kind === "message" && message.encrypted) {
         if (message.text !== null) {
@@ -202,9 +205,9 @@ class StashCatClient {
          }
        }
 
-       // eslint-disable-next-line prettier/prettier
-       yield message;
+       messages.push(message);
      }
+     return messages;
    }
 
    async get_companies() {
@@ -217,7 +220,7 @@ class StashCatClient {
      return data.channels;
    }
 
-   _get_conversation_key(target) {
+   async _get_conversation_key(target) {
     let encrypted_key = this._key_cache[target];
      try {
        if (!encrypted_key) throw new Error("Encrypted key not found");
