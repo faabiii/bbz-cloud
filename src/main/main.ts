@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable prettier/prettier */
 /* eslint-disable promise/no-nesting */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/dot-notation */
@@ -25,6 +27,8 @@ import { autoUpdater } from 'electron-updater';
 import keytar from 'keytar';
 import { clipboard } from 'electron';
 import { resolveHtmlPath } from './util';
+
+import StashCatClient from './StachCatApi';
 
 const appName = app.getName();
 
@@ -222,6 +226,45 @@ ipcMain.on('runUpdate', () => {
   } else {
     const pathMacUpdate = autoUpdater.getFeedURL();
     shell.openExternal(pathMacUpdate);
+  }
+});
+
+ipcMain.on('sendTestMessage', () => {
+  console.log('Testnachricht wird gesendet...');
+  // Ersetze 'DEIN_BENUTZERNAME', 'DEIN_PASSWORT' und 'DEIN_VERSCHLÜSSELUNGSSCHLÜSSEL' mit deinen echten Anmeldeinformationen
+  const username = 'Fabian Tautz';
+  const password = 'Pilzi8345@';
+  const encryptionKey = '{"alg":"RSA-OAEP","e":"AQAB","ext":true,"key_ops":["encrypt"],"kty":"RSA","n":"shoWxS5F_w0qwQvgGpYsbqAI6S23pzi8znQZEqhlFk1xmFaveKs5eM4owXFNQvV0ZSnUwllCqYSxNIExBkoMBm4_ZjAI-CprH5h5zM7ArwkElyXRw0LGBsS_JCA7CoP_4vX2y9Er5bXZ4B_PkThi5KlULsMJAQKTPT_41EVBBgaCUpi-QnoNgNAmI-FCDRnCJSipK7nqLSQH3LX_cU6ijWrO44ws4tMEj1n3TNtBMNOhg1wxwzhYr2PEZOmvq2RDwAJ2iDV26Savk5Q_y2oDJIrp0GHwO2TH_B3v3eeJs6TIVtAhWBjiAsSH5jsY-192Jx-kd1lz_txgsd_2VFTTsfZ_uJztdITU8WRHDktUK6N4PlD7cWiejm65HoJ68Vxyhy4gYGgnTH4_jlrOQKaAtRnwx2sANkFLqtb_7-vB3yatXA6yZ3NdnZ2AdcsljbbDQOmlvOBOUKepwREyC_iqPQ6pKjH2Xoz-PAyrVmKLCrjtb4erT07tIPnxMVTm44Y9CGx8bT8EqKtTQVWtfhhYPOs0V8DzIUY2Hnvudrl-z9AWrHX3EmzxfuYB4VRSwR40fHU7Wu5x8VsrgkpAE19E0FBqUL-61B4PphiOaHFuT8e8okjg1h_O0i0qfXflESMIGgaq27OANlArIc6SIYgI9fym9GcCz97qAu68M2AMzK0"}';
+  const device_id = [...Array(32)].map(() => Math.random().toString(36)[2]).join('');
+  // Erstelle eine Instanz der StashCatClient-Klasse
+  const stashCatClient = new StashCatClient(device_id, "fabian.tautz@sus.bbz-rd-eck.de", "");
+
+  try {
+    // Authentifiziere dich mit Benutzername, Passwort und Verschlüsselungsschlüssel
+    stashCatClient.login(username, password);
+    stashCatClient.open_private_key(encryptionKey);
+
+    // Beispiel: Suche nach einem Benutzer (ersetze 'BENUTZERNAME_DES_EMPFÄNGERS' durch den echten Benutzernamen)
+    const searchResult = stashCatClient.search_user('Vincent Uber');
+
+    if (searchResult.length === 0) {
+      console.error('Benutzer nicht gefunden.');
+      return;
+    }
+
+    // Wähle den ersten gefundenen Benutzer aus der Suchergebnisliste
+    const receiver = searchResult[0];
+
+    // Öffne eine Konversation mit dem ausgewählten Benutzer
+    const conversation = stashCatClient.open_conversation([receiver]);
+
+    // Sende eine Testnachricht an die geöffnete Konversation
+    const messageText = 'Hallo, dies ist eine Testnachricht!';
+    const sendMessageResult = stashCatClient.send_msg_to_user(conversation.id, messageText);
+
+    console.log('Nachricht erfolgreich gesendet:', sendMessageResult);
+  } catch (error) {
+    console.error('Fehler beim Senden der Nachricht:', error.message);
   }
 });
 

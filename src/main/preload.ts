@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('api', {
       'reloadApp',
       'deleteAndReload',
       'bitwarden',
+      'sendTestMessage',
     ];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);

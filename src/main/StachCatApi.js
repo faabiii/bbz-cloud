@@ -14,8 +14,8 @@ const crypto = require('crypto');
 const socketio = require('socket.io-client');
 const request = require('request');
 
-class StashCatClient {
-  constructor(device_id, client_key, user_id, hidden_id) {
+export default class StashCatClient {
+  constructor(device_id, user_id, hidden_id) {
     this.base_url = "https://api.stashcat.com";
     this.push_url = "https://push.stashcat.com";
 
@@ -36,7 +36,6 @@ class StashCatClient {
     }
 
     this.device_id = device_id;
-    this.client_key = client_key;
     this.user_id = user_id;
     this.hidden_id = hidden_id;
   }
